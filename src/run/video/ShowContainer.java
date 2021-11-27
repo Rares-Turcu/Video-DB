@@ -2,6 +2,8 @@ package run.video;
 
 import common.Constants;
 import fileio.*;
+import run.actor.Actor;
+import run.actor.ActorContainer;
 import run.user.Premium;
 import run.user.User;
 
@@ -11,16 +13,40 @@ public class ShowContainer {
     private final ArrayList<Movie> movies;
     private final ArrayList<Serial> serials;
 
-    public ShowContainer(Input input) {
+    public ShowContainer(Input input, ActorContainer actors) {
         this.movies = new ArrayList<>();
         this.serials = new ArrayList<>();
 
         for (MovieInputData m : input.getMovies()) {
-            movies.add(new Movie(m.getTitle(), m.getYear(), m.getGenres(), m.getCast(), m.getDuration()));
+            ArrayList<Actor> cast = new ArrayList<>();
+            ArrayList<String> mentions = new ArrayList<>();
+
+            for(String str : m.getCast()) {
+                if(actors.getActor(str) == null) {
+                    mentions.add(str);
+                }
+                else {
+                    cast.add(actors.getActor(str));
+                }
+            }
+
+            movies.add(new Movie(m.getTitle(), m.getYear(), m.getGenres(), cast, mentions, m.getDuration()));
         }
 
         for(SerialInputData s : input.getSerials()) {
-            serials.add(new Serial(s.getTitle(), s.getYear(), s.getGenres(), s.getCast(), s.getNumberSeason(), s.getSeasons()));
+            ArrayList<Actor> cast = new ArrayList<>();
+            ArrayList<String> mentions = new ArrayList<>();
+
+            for(String str : s.getCast()) {
+                if(actors.getActor(str) == null) {
+                    mentions.add(str);
+                }
+                else {
+                    cast.add(actors.getActor(str));
+                }
+            }
+
+            serials.add(new Serial(s.getTitle(), s.getYear(), s.getGenres(), cast, mentions, s.getNumberSeason(), s.getSeasons()));
         }
     }
 

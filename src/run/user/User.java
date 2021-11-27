@@ -33,8 +33,12 @@ public class User {
         return ratings;
     }
 
+    public int getNumberOfRatings() {
+        return ratings.size();
+    }
+
     @Override
     public String toString() {
-        return "Normal User : " + username;
+        return username;
     }
 }

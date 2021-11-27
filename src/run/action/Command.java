@@ -50,15 +50,16 @@ public class Command extends Action {
 //        System.out.println(key);
         if(user.getHistory().containsKey(show.getTitle())) {
             if(user.getRatings().containsKey(key)) {
-                return "Unknown_Command";
+                return "error -> " + show.getTitle() + " has been already rated";
             }
             user.getRatings().put(key, grade);
+            show.rate(this.season, this.grade);
+
             return "success -> " + show.getTitle() + " was rated with " + grade + " by " + user.getUsername();
         }
 
         return "error -> " + show.getTitle() + " is not seen";
     }
-
 
     public String view() {
         if (user.getHistory().containsKey(show.getTitle())) {
@@ -84,6 +85,6 @@ public class Command extends Action {
 
     @Override
     public String toString() {
-        return "Put in favourite for user " + user.getUsername() + " the movie " + show.getTitle();
+        return "Command for user " + user.getUsername() + " the movie " + show.getTitle();
     }
 }

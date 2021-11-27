@@ -72,10 +72,20 @@ public final class Main {
         JSONArray arrayResult = new JSONArray();
 
         //TODO add here the entry point to your implementation
-        Run r = new Run(input, arrayResult, fileWriter);
+
+        //System.out.println(filePath1 + "\n\n\n\n");
+        //if(filePath1.equals("C:\\Users\\tati\\Desktop\\oop-asignments\\teme\\tema\\test_db\\test_files\\single_query_most_viewed_movie.json") ||
+        //        filePath1.equals("C:\\Users\\tati\\Desktop\\oop-asignments\\teme\\tema\\test_db\\test_files\\single_query_most_viewed_show.json")){
+
+        //if(filePath1.equals("C:\\Users\\tati\\Desktop\\oop-asignments\\teme\\tema\\test_db\\test_files\\large_test_no_2.json")) {
+            System.out.println(filePath1);
+            Run r = new Run(input, arrayResult, fileWriter);
+            r.run();
+        //}
+
 //        r.testUser();
 //        r.testCommand();
-          r.run();
+
 
 
         fileWriter.closeJSON(arrayResult);

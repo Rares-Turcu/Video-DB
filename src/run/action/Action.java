@@ -11,7 +11,10 @@ public abstract class Action {
     public Action(final int actionId) {
         this.actionId = actionId;
     }
-
+    /**
+     * @param fileWriter for output file
+     * @throws IOException in case of exceptions to reading / writing
+     */
     public abstract JSONObject work(Writer fileWriter) throws IOException;
 
     public int getActionId() {

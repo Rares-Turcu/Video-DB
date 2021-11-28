@@ -4,7 +4,6 @@ import common.Constants;
 import fileio.Writer;
 import org.json.simple.JSONObject;
 import run.user.UserContainer;
-import run.video.Serial;
 import run.video.Show;
 
 import java.io.IOException;
@@ -96,6 +95,9 @@ public class ShowQueries<E extends Show> extends Queries {
         sorted.sort(new Comparator<E>() {
             @Override
             public int compare(E o1, E o2) {
+                if (o1.getDuration() == o2.getDuration()) {
+                    return o1.getTitle().compareTo(o2.getTitle()) * finalType;
+                }
                 return (o1.getDuration() - o2.getDuration()) * finalType;
             }
         });
@@ -128,6 +130,9 @@ public class ShowQueries<E extends Show> extends Queries {
         sorted.sort(new Comparator<E>() {
             @Override
             public int compare(E o1, E o2) {
+                if (o1.getViews() == o2.getViews()) {
+                    return o1.getTitle().compareTo(o2.getTitle()) * finalType;
+                }
                 return (o1.getViews() - o2.getViews()) * finalType;
             }
         });
@@ -155,7 +160,13 @@ public class ShowQueries<E extends Show> extends Queries {
         sorted.sort(new Comparator<E>() {
             @Override
             public int compare(E o1, E o2) {
-                return ((int) (o1.getNote() - o2.getNote())) * finalType;
+                if (o1.getNote() < o2.getNote()) {
+                    return -1 * finalType;
+                }
+                if (o1.getNote() > o2.getNote()) {
+                    return finalType;
+                }
+                return o1.getTitle().compareTo(o2.getTitle()) * finalType;
             }
         });
 
@@ -165,13 +176,6 @@ public class ShowQueries<E extends Show> extends Queries {
     }
 
     public ArrayList<E> getList() {
-
-        System.out.println(filters);
-        for(int i = 0; i < filters.size(); i++) {
-            List<String> filter = filters.get(i);
-            System.out.println(filter);
-        }
-
         ArrayList<E> sorted = new ArrayList<>();
 
         for (E m : shows) {
@@ -194,7 +198,6 @@ public class ShowQueries<E extends Show> extends Queries {
     }
 
     public ArrayList<E> yearFilter(ArrayList<E> sorted, List<String> years){
-        System.out.println(sorted);
         ArrayList<E> newSorted = new ArrayList<>();
 
         for (E m : sorted) {
@@ -208,14 +211,10 @@ public class ShowQueries<E extends Show> extends Queries {
             }
         }
 
-        System.out.println("Movies in " + years);
-        System.out.println(newSorted);
-        System.out.println("\n\n\n");
         return newSorted;
     }
 
     public ArrayList<E> genreFilter(ArrayList<E> sorted, List<String> genre){
-        System.out.println(sorted);
         ArrayList<E> newSorted = new ArrayList<>();
 
         for (E m : sorted) {
@@ -229,9 +228,6 @@ public class ShowQueries<E extends Show> extends Queries {
             }
         }
 
-        System.out.println("Movies with " + genre);
-        System.out.println(newSorted);
-        System.out.println("\n\n\n");
         return newSorted;
     }
 

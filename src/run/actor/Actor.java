@@ -51,15 +51,12 @@ public class Actor {
 
     public void calculateGrade(String title, double grade) {
         rate.put(title, grade);
-        System.out.println("Name " + name);
-        System.out.print(average + " -> ");
         average = 0;
 
         for(String key : rate.keySet()) {
             average += rate.get(key);
         }
         average = average / rate.size();
-        System.out.println(average);
     }
 
     @Override

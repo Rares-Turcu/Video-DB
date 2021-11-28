@@ -1,6 +1,5 @@
 package run.video;
 
-import entertainment.Season;
 import run.actor.Actor;
 import run.user.User;
 import run.user.UserContainer;
@@ -47,11 +46,8 @@ public class Movie extends Show {
 
     @Override
     public void rate(int season, double grade) {
-        super.rate(season, grade);
         ratings.add(grade);
         calculateNote();
-
-        System.out.println("Filmul are media: " + this.note);
 
         for (Actor actor : getCast()) {
             actor.calculateGrade(getTitle(), note);
@@ -70,8 +66,6 @@ public class Movie extends Show {
 
     @Override
     public void tallyFavorite(UserContainer users) {
-        System.out.println("I will tottally tally for " + getTitle());
-
         favourites = 0;
 
         for(User u : users.getUsers()) {
@@ -79,24 +73,17 @@ public class Movie extends Show {
                 favourites++;
             }
         }
-
-        System.out.println("favorites amount " + favourites + "\n\n\n");
     }
 
     @Override
     public void tallyViews(UserContainer users) {
-
         views = 0;
-
-        System.out.println("I will tottally tally views for " + getTitle());
 
         for(User u : users.getUsers()) {
             if(u.getHistory().containsKey(getTitle())) {
                 views += u.getHistory().get(getTitle());
             }
         }
-
-        System.out.println("views amount " + views + "\n\n\n");
     }
 
     @Override

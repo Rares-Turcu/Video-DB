@@ -8,9 +8,6 @@ import run.video.Show;
 
 import java.io.IOException;
 
-// TO DO
-// add rating and views for show
-
 public class Command extends Action {
     private final User user;
     private final String type;
@@ -47,7 +44,7 @@ public class Command extends Action {
         if(season != 0) {
             key = key + " " + season;
         }
-//        System.out.println(key);
+
         if(user.getHistory().containsKey(show.getTitle())) {
             if(user.getRatings().containsKey(key)) {
                 return "error -> " + show.getTitle() + " has been already rated";
@@ -81,10 +78,5 @@ public class Command extends Action {
             return "success -> " + show.getTitle() + " was added as favourite";
         }
         return "error -> " + show.getTitle() + " is not seen";
-    }
-
-    @Override
-    public String toString() {
-        return "Command for user " + user.getUsername() + " the movie " + show.getTitle();
     }
 }

@@ -50,10 +50,7 @@ public class Serial extends Show {
     @Override
     public void rate(int season, double grade) {
         seasons.get(season - 1).getRatings().add(grade);
-        super.rate(season, grade);
         calculateNote();
-
-        System.out.println("Serialul are media : " + this.note);
 
         for (Actor actor : getCast()) {
             actor.calculateGrade(getTitle(), note);
@@ -80,8 +77,6 @@ public class Serial extends Show {
 
     @Override
     public void tallyFavorite(UserContainer users) {
-        System.out.println("I will tottally tally for " + getTitle());
-
         favourites = 0;
 
         for(User u : users.getUsers()) {
@@ -89,24 +84,17 @@ public class Serial extends Show {
                 favourites++;
             }
         }
-
-        System.out.println("favorites amount " + favourites + "\n\n\n");
     }
 
     @Override
     public void tallyViews(UserContainer users) {
-
         views = 0;
-
-        System.out.println("I will tottally tally views for " + getTitle());
 
         for(User u : users.getUsers()) {
             if(u.getHistory().containsKey(getTitle())) {
                 views += u.getHistory().get(getTitle());
             }
         }
-
-        System.out.println("views amount " + views + "\n\n\n");
     }
 
     @Override

@@ -1,5 +1,7 @@
 package run.user;
 
+import run.video.Show;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,18 @@ public class User {
 
     public int getNumberOfRatings() {
         return ratings.size();
+    }
+
+    public String recommendationPopular(ArrayList<Show> unseenShows, String popularGenre) {
+        return "PopularRecommendation cannot be applied!";
+    }
+
+    public String recommendationFavorite(ArrayList<Show> unseenShows) {
+        return "FavoriteRecommendation cannot be applied!";
+    }
+
+    public String recommendationSearch(ArrayList<Show> unseenShows) {
+        return "SearchRecommendation cannot be applied!";
     }
 
     @Override

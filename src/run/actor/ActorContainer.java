@@ -2,7 +2,6 @@ package run.actor;
 
 import fileio.ActorInputData;
 import fileio.Input;
-import run.user.User;
 
 import java.util.ArrayList;
 

@@ -54,6 +54,9 @@ public class Run {
                     actions.add(new UserQueries(a.getActionId(), a.getNumber(), a.getSortType(), a.getCriteria(), users));
                 }
             }
+            if(a.getActionType().equals(Constants.RECOMMENDATION)) {
+                actions.add(new Recommendation(a.getActionId(), users.getUser(a.getUsername()), shows, users, a.getType(), a.getGenre()));
+            }
         }
 
 
@@ -67,17 +70,4 @@ public class Run {
             actions.remove(0);
         }
     }
-
-    public void testUser() {
-        for (User u : users.getUsers()) {
-            System.out.println(u.toString());
-        }
-    }
-
-    public void testCommand() {
-        for (Action a : actions) {
-            System.out.println(a.toString());
-        }
-    }
-
 }

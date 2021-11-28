@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ActorQueries extends Queries {
 
@@ -47,10 +49,6 @@ public class ActorQueries extends Queries {
             }
         }
 
-        for(Actor a : sorted) {
-            System.out.println(a.toString() + " " + a.getAverage() + ", ");
-        }
-
         if(sorted.size() == 0 || sorted.size() == 1) {
             return "Query result: " + sorted;
         }
@@ -65,20 +63,17 @@ public class ActorQueries extends Queries {
             @Override
             public int compare(Actor o1, Actor o2) {
                 if (o1.getAverage() == o2.getAverage()) {
-                    return (o1.getName().compareTo(o2.getName()));
+                    return (o1.getName().compareTo(o2.getName())) * finalType;
                 }
-                return ((int) (o1.getAverage() - o2.getAverage())) * finalType;
+                if (o1.getAverage() < o2.getAverage()) {
+                    return -1 * finalType;
+                }
+                return finalType;
             }
         });
-
-        System.out.println("\n\n\n" + sorted + "\n\n\n");
-
         sorted = TrimToNumber(sorted);
 
-        System.out.println("\n\n\n" + sorted + "\n\n\n");
-
         return "Query result: " + sorted;
-
     }
 
     public String awards() {
@@ -90,11 +85,6 @@ public class ActorQueries extends Queries {
 
 
             for (int i = 0 ; i < awards.size(); i++) {
-
-                System.out.println(a.getName() + " has trophy " + awards.get(i) + ": " + a.getAwards().containsKey(ActorsAwards.valueOf(awards.get(i))) + " "
-                        + a.getAwards().get(ActorsAwards.valueOf(awards.get(i))) + " / " + a.getAwardsNumber());
-
-
                 if (a.getAwards().containsKey(ActorsAwards.valueOf(awards.get(i)))) {
                     check++;
                 }
@@ -103,9 +93,6 @@ public class ActorQueries extends Queries {
                 sorted.add(a);
             }
         }
-
-        System.out.println("\n\n\n" + sorted + "\n\n\n AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
         if(sorted.isEmpty() || sorted.size() == 1) {
             return "Query result: " + sorted.toString();
         }
@@ -125,33 +112,37 @@ public class ActorQueries extends Queries {
                 return (o1.getAwardsNumber() - o2.getAwardsNumber()) * finalType;
             }
         });
-
-        for (Actor a : sorted) {
-            System.out.println(a + " " + a.getAwards().size());
-        }
-
         sorted = TrimToNumber(sorted);
-
-        System.out.println("\n\n\n" + sorted + "\n\n\n");
 
         return "Query result: " + sorted;
     }
 
     public String filterDescription() {
-        List<String> words = filters.get(2);
         ArrayList<Actor> sorted = new ArrayList<>();
 
         for (Actor a : actors.getActors()) {
-            int check = 0;
+            List<String> words = new ArrayList<>();
 
-            for (int i = 0 ; i < words.size(); i++) {
-                String desc = a.getDescription().toLowerCase();
+            String desc = a.getDescription().toLowerCase();
+            Pattern pattern = Pattern.compile("([A-Za-z]+)", Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(desc);
 
-                if (desc.contains(words.get(i))) {
-                    check++;
+            for(String s : filters.get(2)) {
+                words.add(s);
+            }
+
+            while(matcher.find()) {
+                for (int j = 0; j < matcher.groupCount(); j++) {
+
+                    for (int i = 0 ; i < words.size(); i++) {
+                        if(words.get(i).equals(matcher.group(j))) {
+                            words.remove(i);
+                        }
+                    }
                 }
             }
-            if(check == words.size()) {
+
+            if(words.isEmpty()) {
                 sorted.add(a);
             }
         }

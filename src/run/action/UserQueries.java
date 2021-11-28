@@ -3,7 +3,6 @@ package run.action;
 import common.Constants;
 import fileio.Writer;
 import org.json.simple.JSONObject;
-import run.actor.Actor;
 import run.user.User;
 import run.user.UserContainer;
 
@@ -48,9 +47,9 @@ public class UserQueries extends Queries {
             @Override
             public int compare(User o1, User o2) {
                 if (o1.getNumberOfRatings() == o2.getNumberOfRatings()) {
-                    return (o1.getUsername().compareTo(o2.getUsername()));
+                    return (o1.getUsername().compareTo(o2.getUsername())) * finalType;
                 }
-                return ((int) (o1.getNumberOfRatings() - o2.getNumberOfRatings())) * finalType;
+                return (o1.getNumberOfRatings() - o2.getNumberOfRatings()) * finalType;
             }
         });
 

@@ -37,10 +37,7 @@ public abstract class Show {
         return genres;
     }
 
-    public void rate(int season, double grade) {
-        System.out.println(title + "Was graded " + grade);
-        System.out.println("\n");
-    }
+    public abstract void rate(int season, double grade);
 
     public abstract double getNote();
 

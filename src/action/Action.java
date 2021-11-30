@@ -1,4 +1,4 @@
-package run.action;
+package action;
 
 import fileio.Writer;
 import org.json.simple.JSONObject;
@@ -17,12 +17,10 @@ public abstract class Action {
      */
     public abstract JSONObject work(Writer fileWriter) throws IOException;
 
+    /**
+     * @return actionId
+     */
     public int getActionId() {
         return actionId;
-    }
-
-    @Override
-    public String toString() {
-        return null;
     }
 }

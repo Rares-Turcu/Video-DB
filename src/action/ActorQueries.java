@@ -1,11 +1,10 @@
-package run.action;
+package action;
 
-import actor.ActorsAwards;
 import common.Constants;
 import fileio.Writer;
 import org.json.simple.JSONObject;
-import run.actor.Actor;
-import run.actor.ActorContainer;
+import actor.Actor;
+import actor.ActorContainer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,33 +13,41 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static utils.Utils.stringToAwards;
+
 public class ActorQueries extends Queries {
 
     private final ActorContainer actors;
     private final List<List<String>> filters;
     private final String criteria;
 
-    public ActorQueries(int actionId, int number, List<List<String>> filters, String sort_type, String criteria, ActorContainer actors) {
-        super(actionId, number, sort_type);
+    public ActorQueries(final int actionId, final int number, final List<List<String>> filters,
+                        final String sortType, final String criteria,
+                        final ActorContainer actors) {
+        super(actionId, number, sortType);
         this.actors = actors;
         this.filters = filters;
         this.criteria = criteria;
     }
 
+    /**
+     * @param fileWriter for output file
+     * @throws IOException in case of exceptions to reading / writing
+     */
     @Override
-    public JSONObject work(Writer fileWriter) throws IOException {
-        if (criteria.equals(Constants.AVERAGE)) {
-            return fileWriter.writeFile(super.getActionId(), null, average());
-        }
-        if (criteria.equals(Constants.AWARDS)) {
-            return fileWriter.writeFile(super.getActionId(), null, awards());
-        }
-        if (criteria.equals(Constants.FILTER_DESCRIPTIONS)) {
-            return fileWriter.writeFile(super.getActionId(), null, filterDescription());
-        }
-        return null;
+    public JSONObject work(final Writer fileWriter) throws IOException {
+        return switch (criteria) {
+            case Constants.AVERAGE -> fileWriter.writeFile(super.getActionId(), null, average());
+            case Constants.AWARDS -> fileWriter.writeFile(super.getActionId(), null, awards());
+            case Constants.FILTER_DESCRIPTIONS -> fileWriter.writeFile(super.getActionId(),
+                    null, filterDescription());
+            default -> null;
+        };
     }
 
+    /**
+     * @return a string used for output file
+     */
     public String average() {
         ArrayList<Actor> sorted = new ArrayList<>();
         for (Actor a : actors.getActors()) {
@@ -49,19 +56,19 @@ public class ActorQueries extends Queries {
             }
         }
 
-        if(sorted.size() == 0 || sorted.size() == 1) {
+        if (sorted.size() == 0 || sorted.size() == 1) {
             return "Query result: " + sorted;
         }
 
         int type = 1;
-        if (getSort_type().equals("desc")) {
+        if (getSortType().equals("desc")) {
             type = -1;
         }
 
         int finalType = type;
         sorted.sort(new Comparator<Actor>() {
             @Override
-            public int compare(Actor o1, Actor o2) {
+            public int compare(final Actor o1, final Actor o2) {
                 if (o1.getAverage() == o2.getAverage()) {
                     return (o1.getName().compareTo(o2.getName())) * finalType;
                 }
@@ -71,52 +78,59 @@ public class ActorQueries extends Queries {
                 return finalType;
             }
         });
-        sorted = TrimToNumber(sorted);
+        sorted = trimToNumber(sorted);
 
         return "Query result: " + sorted;
     }
 
+    /**
+     * @return a string used for output file
+     */
     public String awards() {
-        List<String> awards = filters.get(3);
+
+        List<String> awards = filters.get(Constants.AWARDS_FILTER);
         ArrayList<Actor> sorted = new ArrayList<>();
 
         for (Actor a : actors.getActors()) {
             int check = 0;
 
-
-            for (int i = 0 ; i < awards.size(); i++) {
-                if (a.getAwards().containsKey(ActorsAwards.valueOf(awards.get(i)))) {
+            for (int i = 0; i < awards.size(); i++) {
+                if (a.getAwards().containsKey(stringToAwards(awards.get(i)))) {
                     check++;
                 }
             }
-            if(check == awards.size()) {
+            if (check == awards.size()) {
                 sorted.add(a);
             }
         }
-        if(sorted.isEmpty() || sorted.size() == 1) {
+
+        if (sorted.isEmpty() || sorted.size() == 1) {
             return "Query result: " + sorted.toString();
         }
 
         int type = 1;
-        if (getSort_type().equals("desc")) {
+        if (getSortType().equals("desc")) {
             type = -1;
         }
 
         int finalType = type;
         sorted.sort(new Comparator<Actor>() {
             @Override
-            public int compare(Actor o1, Actor o2) {
+            public int compare(final Actor o1, final Actor o2) {
                 if (o1.getAwardsNumber() == o2.getAwardsNumber()) {
                     return (o1.getName().compareTo(o2.getName())) * finalType;
                 }
                 return (o1.getAwardsNumber() - o2.getAwardsNumber()) * finalType;
             }
         });
-        sorted = TrimToNumber(sorted);
+        sorted = trimToNumber(sorted);
 
         return "Query result: " + sorted;
     }
 
+    /**
+     * @return a string used for output file
+     */
     public String filterDescription() {
         ArrayList<Actor> sorted = new ArrayList<>();
 
@@ -127,49 +141,53 @@ public class ActorQueries extends Queries {
             Pattern pattern = Pattern.compile("([A-Za-z]+)", Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(desc);
 
-            for(String s : filters.get(2)) {
+            for (String s : filters.get(2)) {
                 words.add(s);
             }
 
-            while(matcher.find()) {
+            while (matcher.find()) {
                 for (int j = 0; j < matcher.groupCount(); j++) {
 
-                    for (int i = 0 ; i < words.size(); i++) {
-                        if(words.get(i).equals(matcher.group(j))) {
+                    for (int i = 0; i < words.size(); i++) {
+                        if (words.get(i).equals(matcher.group(j))) {
                             words.remove(i);
                         }
                     }
                 }
             }
 
-            if(words.isEmpty()) {
+            if (words.isEmpty()) {
                 sorted.add(a);
             }
         }
 
-        if(sorted.isEmpty() || sorted.size() == 1) {
+        if (sorted.isEmpty() || sorted.size() == 1) {
             return "Query result: " + sorted.toString();
         }
 
         int type = 1;
-        if (getSort_type().equals("desc")) {
+        if (getSortType().equals("desc")) {
             type = -1;
         }
 
         int finalType = type;
         sorted.sort(new Comparator<Actor>() {
             @Override
-            public int compare(Actor o1, Actor o2) {
+            public int compare(final Actor o1, final Actor o2) {
                 return (o1.getName().compareTo(o2.getName())) * finalType;
             }
         });
 
-        sorted = TrimToNumber(sorted);
+        sorted = trimToNumber(sorted);
 
         return "Query result: " + sorted;
     }
 
-    public ArrayList<Actor> TrimToNumber(ArrayList<Actor> sorted){
+    /**
+     * @param sorted<Actor>
+     * @return the first n actors used for output
+     */
+    public ArrayList<Actor> trimToNumber(final ArrayList<Actor> sorted) {
         if (!(getNumber() >= sorted.size() || getNumber() == 0)) {
             while (sorted.size() > getNumber()) {
                 sorted.remove(sorted.size() - 1);
@@ -178,5 +196,4 @@ public class ActorQueries extends Queries {
 
         return sorted;
     }
-
 }

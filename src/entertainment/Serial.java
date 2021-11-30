@@ -1,9 +1,8 @@
-package run.video;
+package entertainment;
 
-import entertainment.Season;
-import run.actor.Actor;
-import run.user.User;
-import run.user.UserContainer;
+import actor.Actor;
+import user.User;
+import user.UserContainer;
 
 import java.util.ArrayList;
 
@@ -15,7 +14,9 @@ public class Serial extends Show {
     private int views;
     private int favourites;
 
-    public Serial(String title, int year, ArrayList<String> genres, ArrayList<Actor> cast, ArrayList<String> mentions, int numberOfSeasons, ArrayList<Season> seasons) {
+    public Serial(final String title, final int year, final ArrayList<Genre> genres,
+                  final ArrayList<Actor> cast, final ArrayList<String> mentions,
+                  final int numberOfSeasons, final ArrayList<Season> seasons) {
         super(title, year, genres, cast, mentions);
         this.numberOfSeasons = numberOfSeasons;
         this.seasons = seasons;
@@ -24,31 +25,50 @@ public class Serial extends Show {
         this.favourites = 0;
     }
 
+    /**
+     * @return duration
+     */
     public int getDuration() {
         int time = 0;
-        for(Season s : seasons) {
+        for (Season s : seasons) {
             time += s.getDuration();
         }
         return time;
     }
 
+
+    /**
+     * @return note
+     */
     @Override
     public double getNote() {
         return note;
     }
 
+    /**
+     * @return the number of views
+     */
     @Override
     public int getViews() {
         return views;
     }
 
+    /**
+     * @return the number of favourites
+     */
     @Override
     public int getFavourites() {
         return favourites;
     }
 
+    /**
+     * @param season
+     * @param grade
+     * the method updates both the ratings list of
+     * a show and of every actor in the cast when a user reviews it
+     */
     @Override
-    public void rate(int season, double grade) {
+    public void rate(final int season, final double grade) {
         seasons.get(season - 1).getRatings().add(grade);
         calculateNote();
 
@@ -57,6 +77,9 @@ public class Serial extends Show {
         }
     }
 
+    /**
+     * calculates the note of a serial
+     */
     public void calculateNote() {
         note = 0;
 
@@ -67,7 +90,7 @@ public class Serial extends Show {
                 a += grade;
             }
 
-            if(season.getRatings().size() != 0) {
+            if (season.getRatings().size() != 0) {
                 note += a / season.getRatings().size();
             }
         }
@@ -75,28 +98,39 @@ public class Serial extends Show {
         note = note / seasons.size();
     }
 
+    /**
+     * @param users
+     * calculates the number of times users added the serial to favorites
+     */
     @Override
-    public void tallyFavorite(UserContainer users) {
+    public void tallyFavorite(final UserContainer users) {
         favourites = 0;
 
-        for(User u : users.getUsers()) {
-            if(u.getFavoriteMovies().contains(getTitle())) {
+        for (User u : users.getUsers()) {
+            if (u.getFavoriteMovies().contains(getTitle())) {
                 favourites++;
             }
         }
     }
 
+    /**
+     * @param users
+     * calculates the number of times users viewed the serial
+     */
     @Override
-    public void tallyViews(UserContainer users) {
+    public void tallyViews(final UserContainer users) {
         views = 0;
 
-        for(User u : users.getUsers()) {
-            if(u.getHistory().containsKey(getTitle())) {
+        for (User u : users.getUsers()) {
+            if (u.getHistory().containsKey(getTitle())) {
                 views += u.getHistory().get(getTitle());
             }
         }
     }
 
+    /**
+     * @return title
+     */
     @Override
     public String toString() {
         return getTitle();

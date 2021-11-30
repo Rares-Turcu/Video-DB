@@ -1,0 +1,161 @@
+Object Oriented Programming Course
+Homework - VideosDB
+
+November 2021
+
+# Info
+The program simulates the workflow of database for a site that offers movies / serials streaming, keeping track of user
+related statistics (number of views, popular shows, etc.).
+
+# About the code
+* src
+	* checker
+The checker's sources including the checkstyle necessary files, not to be modified.
+
+	* fileio
+Classes for parsing the input files, not to be modified.
+
+	* common, utils
+Contain utility classes with constants and static methods.
+
+    * main
+The starting point of the program.
+
+	* actor
+Contains all the actor related classes.
+		- Actor:
+    The class that builds every actor instance. It also calculates the overall grade of the actor once a movie he has
+    played in was reviewed by a user.
+        - ActorContainer:
+    A factory class that takes the data from Input and builds all the actors, keeping them in a list. It is able to
+    search for a specific actor by name.
+        - ActorsAwards:
+    An enum of all the possible awards an actor can have.
+
+	* users
+Contains all the user related classes. There are 2 types of users: normal and premium. The Premium class extends the
+User class. The premium users have access to different types of recommendations, but to separate the functions of
+Recommendations from the User classes, I decided to use Double Dispatch.
+		- User:
+	A class that build every normal user instance. It implements the Visitable interface to use Double Dispatch.
+		- Premium:
+	A class that build every premium user instance. It overrides the accept method from User to use Double Dispatch.
+		- UserContainer:
+    A factory class that takes the data from Input and builds all the users, keeping them in a list. It is able to
+    search for a specific user by username.
+        - Visitable:
+   An instance that forces the User classes to override the accept method used in Double Dispatch.
+
+    * entertainment
+Contains all the show related classes and enums. There are 2 types of shows: movies and serials. A serial contains a
+number of seasons, each with their own ratings and durations. The movie class and serial class both extend an abstract
+class named Shows, which contain the common elements between movies and serials.
+        - Genre:
+    An enum of all the possible genres a show can have.
+        - Movie:
+    A class that build every movie instance. It can also calculate the number of views, number of favorites and the
+    overall grade of the movie.
+        - Serial:
+    A class that build every serial instance. It can calculate the statistics of a serial, just like the movie class.
+    It also keeps track of every season in the serial, storing them in a list.
+        - Season:
+    A class that builds every season instance.
+        - Show:
+    An abstract class that is extended by the movie and serial class. It has abstract methods, overridden by movie and
+    serial classes.
+        - ShowContainer:
+    A factory class that takes the data form Input and builds all the movies and serials, keeping them in a list.
+
+    * run
+        - Run:
+A class that starts the functionality of the program. It instances all the factory classes, then it takes every action
+type objects and performs said action by using the run method. This method calls the work method, which is overridden in
+every Action class and builds the output in a JSONArray.
+
+    * visitor
+        - Visitor:
+    An instance that forces the classes in this package to override the visit methods used in Double Dispatch.
+        - FavoriteVisitor:
+    A visitor class that implements the Visitor interface. It is used for Double Dispatch in the favorite type of
+    recommendations.
+        - PopularVisitor:
+    A visitor class that implements the Visitor interface. It is used for Double Dispatch in the popular type of
+    recommendations.
+        - SearchVisitor:
+    A visitor class that implements the Visitor interface. It is used for Double Dispatch in the search type of
+    recommendations.
+
+
+    * action
+        - Action:
+    An abstract class, extended by all the main action types: Command, Query, Recommendation. It contains the abstract
+    method work, overridden in every action class.
+
+        - ActionFactory:
+    A factory class that takes the data form Input and builds all the actions that will apply to the database, storing
+    them in order of apparition.
+
+        - Command:
+    The first type of action. It overrides the work method, which separates the functionality in 3 types of commands,
+    favourite, view, rate. When a user views or adds a show to favorite, the user's history / favorite list is updating.
+    Instead, when a user is rating a movie, both the rating list of the user and the movie is updating. When a movie is
+    getting rated the grade is also used on calculating the overall score of every actor from that movie's cast.
+
+        - Queries:
+    An abstract class that is extended by all the query types: ActorQueries, ShowQueries and UserQueries.
+
+        - ActorQueries:
+    It overrides the work method, which separates the functionality in 3 types of queries: average, awards and filter
+    description. Every query is working on a shallow copy on the list given from an ActorContainer instance. The query
+    does change the order of the actor type objects from the list, but does not modify the actor objects itself, so a
+    deep copy is not necessary.
+
+        - ShowQueries:
+    It's a generic class that works with classes that extend the Show class. It functions exactly like ActorQueries,
+    overriding the work method, which separates the functionality in 4 types of queries: favorite, longest, most viewed
+    and ratings. It makes a shallow copy by combining the movie and serial lists from ShowContainer. For favorite and
+    most viewed queries, it calls methods from the Movie and Serial class, witch tallies the number of favorites / views
+    for every show by every user.
+
+        - UserQueries:
+    A class that overrides the work method which sorts the users by the number of reviews they made.
+
+        - Recommendation:
+    The last type of action. It overrides the work function, separating the workflow of the method in 2 types of
+    recommendations. The first type is available for all the user types so the standard and the best unseen
+    recommendations are fully implemented in this class. The last type of recommendations is available only for premium
+    users, so to implement the different results of the same action depending on the user, I choose to use Double
+    Dispatch. The methods popular, favorite and search send a visitor instance for every type of recommendations to the
+    accept method of the user. Then that accept method send the type of user on the visit method from the type of
+    Visitor, which then acts accordingly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
